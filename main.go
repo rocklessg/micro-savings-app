@@ -1,9 +1,10 @@
 package main
 
 import (
-	"os"
 	"micro-savings-app/database"
 	"micro-savings-app/handlers"
+	"micro-savings-app/middlewares"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -24,7 +25,11 @@ func main() {
 
 	// Register the user routes
 	router.POST("/users/register", handlers.RegisterUser)
-	router.POST("/transactions/deposit", handlers.Deposit)
+	router.POST("/users/login", handlers.Login)
+
+	protected := router.Group("/")
+	protected.Use(middlewares.AuthMiddleware())	
+	protected.POST("/transactions/deposit", handlers.Deposit)
 
 	// Start the server
 	port := os.Getenv("PORT")
