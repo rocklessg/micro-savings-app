@@ -24,6 +24,7 @@ func main() {
 
 	// Register the user routes
 	router.POST("/users/register", handlers.RegisterUser)
+	router.POST("/transactions/deposit", handlers.Deposit)
 
 	// Start the server
 	port := os.Getenv("PORT")
