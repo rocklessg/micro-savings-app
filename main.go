@@ -30,6 +30,7 @@ func main() {
 	protected := router.Group("/")
 	protected.Use(middlewares.AuthMiddleware())	
 	protected.POST("/transactions/deposit", handlers.Deposit)
+	protected.POST("/transactions/withdraw", handlers.Withdraw)
 
 	// Start the server
 	port := os.Getenv("PORT")
