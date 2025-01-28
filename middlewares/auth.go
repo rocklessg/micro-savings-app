@@ -1,8 +1,9 @@
 package middlewares
 
 import (
-	"net/http"
 	"micro-savings-app/services"
+	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,12 +13,19 @@ import (
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Extract the token from the Authorization header
-		tokenString := c.GetHeader("Authorization")
-		if tokenString == "" {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized! Missing Authorization header"})
 			c.Abort()
 			return
 		}
+
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+		if tokenString == authHeader {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized! Invalid Authorization header format"})
+			c.Abort()
+			return
+		}		
 
 		// Validate the token
 		claims, err := services.ValidateJWT(tokenString)

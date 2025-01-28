@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -49,5 +50,9 @@ func DisconnectMongoDB() error {
 
 // GetCollection returns a reference to a specific collection
 func GetCollection(collectionName string) *mongo.Collection {
-	return MongoClient.Database("micro-savings_db").Collection(collectionName)
+    dbName := os.Getenv("DB_NAME")
+    if dbName == "" {
+        panic("DB_NAME is not set in the environment variables")
+    }
+    return MongoClient.Database(dbName).Collection(collectionName)
 }

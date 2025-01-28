@@ -20,7 +20,7 @@ func main() {
 	}
 
 	// Connect to MongoDB
-	database.ConnectDB(os.Getenv("MONGODB_URI"))
+	database.ConnectDB(os.Getenv("MONGO_URI"))
 
 	// Create a new Gin router
 	router := gin.Default()
@@ -37,7 +37,7 @@ func main() {
 	// Set up the cron job
 	c := cron.New()
 	_, err = c.AddFunc("@daily", func() {
-		jobs.AllocateIdleBalances(database.MongoClient.Database(os.Getenv("MONGODB_URI")))
+		jobs.AllocateIdleBalances(database.MongoClient.Database(os.Getenv("DB_NAME")))
 	})
 	if err != nil {
 		panic("Failed to add cron job: " + err.Error())

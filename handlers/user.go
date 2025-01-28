@@ -44,12 +44,13 @@ func RegisterUser(c *gin.Context) {
 
 	// Create the user document
 	newUser := models.User{
-		Name:             request.Name,
-		Email:            request.Email,
-		PasswordHash:     string(hashedPassword),
-		SavingsBalance:   0,
+		Name:              request.Name,
+		Email:             request.Email,
+		PasswordHash:      string(hashedPassword),
+		SavingsBalance:    0,
 		InvestmentBalance: 0,
-		CreatedAt:        time.Now(),
+		CreatedAt:         time.Now(),
+		UpdatedAt:         time.Now(),
 	}
 
 	_, err = usersCollection.InsertOne(context.Background(), newUser)
