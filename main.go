@@ -3,8 +3,8 @@ package main
 import (
 	"micro-savings-app/database"
 	"micro-savings-app/handlers"
-	"micro-savings-app/middlewares"
 	"micro-savings-app/jobs"
+	"micro-savings-app/middlewares"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -20,7 +20,7 @@ func main() {
 	}
 
 	// Connect to MongoDB
-	db := database.ConnectDB(os.Getenv("MONGODB_URI"))
+	database.ConnectDB(os.Getenv("MONGODB_URI"))
 
 	// Create a new Gin router
 	router := gin.Default()
@@ -37,7 +37,7 @@ func main() {
 	// Set up the cron job
 	c := cron.New()
 	_, err = c.AddFunc("@daily", func() {
-		jobs.AllocateIdleBalances(db)
+		jobs.AllocateIdleBalances(database.MongoClient.Database(os.Getenv("MONGODB_URI")))
 	})
 	if err != nil {
 		panic("Failed to add cron job: " + err.Error())
@@ -47,7 +47,7 @@ func main() {
 	// Ensure cron stops when the app shuts down
 	defer func() {
 		c.Stop()
-		db.Client().Disconnect(context.Background()) // Ensure MongoDB connection is closed
+		database.DisconnectMongoDB() // Ensure MongoDB connection is closed
 	}()
 	
 	// Start the server
