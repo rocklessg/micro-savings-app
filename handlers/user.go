@@ -13,6 +13,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var usersCollection = database.GetCollection("users")
+
 // RegisterUser handles user registration
 func RegisterUser(c *gin.Context) {
 	var request struct {
@@ -27,7 +29,7 @@ func RegisterUser(c *gin.Context) {
 	}
 
 	// Check if email is already registered
-	usersCollection := database.GetCollection("users")
+	//usersCollection := database.GetCollection("users")
 	var existingUser models.User
 	err := usersCollection.FindOne(context.Background(), bson.M{"email": request.Email}).Decode(&existingUser)
 	if err == nil {
@@ -75,7 +77,7 @@ func Login(c *gin.Context) {
     }
 
     // Fetch the user document from the database
-    usersCollection := database.GetCollection("users")
+    //usersCollection := database.GetCollection("users")
     var user models.User
     err := usersCollection.FindOne(context.Background(), bson.M{"email": request.Email}).Decode(&user)
     if err != nil {
@@ -102,4 +104,25 @@ func Login(c *gin.Context) {
 		"message": "Login successful",
 		"token":   token,
 	})
+}
+
+func GetUserByID() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userId := c.Query("user_id") // fetch the user id from the url (query param)
+		if userId == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "UserId is required"})
+			c.Abort()
+			return
+		}
+
+		user, err := services.GetUserByID(userId)
+		if err != nil || user == nil {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Forbidden! User not found"})
+			c.Abort()
+			return
+		}
+		
+		// Return the user details
+		c.JSON(http.StatusOK, user)
+	}
 }

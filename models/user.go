@@ -15,6 +15,7 @@ PasswordHash      string    			  `bson:"password_hash"`
 SavingsBalance    float64   			  `bson:"savings_balance"`
 InvestmentBalance float64 			      `bson:"investment_balance"`
 LastTransactionAt time.Time               `bson:"last_transaction_at"`
+IsAdmin			  bool					  `bson:"is_admin"`
 CreatedAt         time.Time 			  `bson:"created_at"`
 UpdatedAt         time.Time 			  `bson:"updated_at"`
 }
