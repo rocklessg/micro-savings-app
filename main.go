@@ -27,13 +27,22 @@ func main() {
 
 	// Register the user routes
 	router.POST("/users/register", handlers.RegisterUser)
-	router.POST("/users/admin/register", handlers.RegisterAdmin)
 	router.POST("/users/login", handlers.Login)
+	router.POST("/users/admin/register", handlers.RegisterAdmin)
 
-	protected := router.Group("/")
+	// Register the admin protected routes
+	protectedAdmin := router.Group("/admin")
+	protectedAdmin.Use(middlewares.AuthMiddleware(), middlewares.AdminAuthMiddleware())
+	protectedAdmin.POST("/register", handlers.RegisterAdmin)
+	protectedAdmin.POST("/create-user-admin", handlers.MakeAdmin)
+	protectedAdmin.POST("/remove-admin-user", handlers.RemoveAdmin)
+	protectedAdmin.POST("/dashboard", handlers.AdminDashboard)
+    
+	// Register users protected routes
+	protected := router.Group("/users")
 	protected.Use(middlewares.AuthMiddleware())	
-	protected.POST("/transactions/deposit", handlers.Deposit)
-	protected.POST("/transactions/withdraw", handlers.Withdraw)
+	protected.POST("/deposit", handlers.Deposit)
+	protected.POST("/withdraw", handlers.Withdraw)
 
 	// Set up the cron job
 	c := cron.New()
