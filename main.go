@@ -27,6 +27,7 @@ func main() {
 
 	// Register the user routes
 	router.POST("/users/register", handlers.RegisterUser)
+	router.POST("/users/admin/register", handlers.RegisterAdmin)
 	router.POST("/users/login", handlers.Login)
 
 	protected := router.Group("/")

@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"context"
+	"time"
+	"net/http"
+
 	"micro-savings-app/database"
 	"micro-savings-app/models"
 	"micro-savings-app/services"
-	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -51,6 +52,7 @@ func RegisterUser(c *gin.Context) {
 		PasswordHash:      string(hashedPassword),
 		SavingsBalance:    0,
 		InvestmentBalance: 0,
+		IsAdmin: 		   false,
 		CreatedAt:         time.Now(),
 		UpdatedAt:         time.Now(),
 	}
