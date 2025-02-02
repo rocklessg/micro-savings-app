@@ -185,3 +185,25 @@ func AdminDashboard(c *gin.Context) {
 		"total_withdrawals": totalWithdrawals,
 	})
 }
+
+// This is admin get user by ID
+func AdminGetUserByID() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userId := c.Query("user_id") // fetch the user id from the url (query param)
+		if userId == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "UserId is required"})
+			c.Abort()
+			return
+		}
+
+		user, err := services.GetUserByID(userId)
+		if err != nil || user == nil {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Forbidden! User not found"})
+			c.Abort()
+			return
+		}
+		
+		// Return the user details
+		c.JSON(http.StatusOK, user)
+	}
+}

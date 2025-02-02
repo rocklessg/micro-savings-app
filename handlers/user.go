@@ -108,6 +108,7 @@ func Login(c *gin.Context) {
 	})
 }
 
+// This is for user. Update to fetch useId from the token
 func GetUserByID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userId := c.Query("user_id") // fetch the user id from the url (query param)

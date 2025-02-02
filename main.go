@@ -26,24 +26,25 @@ func main() {
 	router := gin.Default()
 
 	// Register the user routes
-	router.POST("/users/register", handlers.RegisterUser)
-	router.POST("/users/login", handlers.Login)
-	router.POST("/users/admin/register", handlers.RegisterAdmin)
+	router.POST("/user/register", handlers.RegisterUser)
+	router.POST("/user/login", handlers.Login)
+	router.POST("/admin/register", handlers.RegisterAdmin)
 
 	// Register the admin protected routes
 	protectedAdmin := router.Group("/admin")
 	protectedAdmin.Use(middlewares.AuthMiddleware(), middlewares.AdminAuthMiddleware())
-	protectedAdmin.POST("/register", handlers.RegisterAdmin)
 	protectedAdmin.POST("/create-user-admin", handlers.MakeAdmin)
 	protectedAdmin.POST("/remove-admin-user", handlers.RemoveAdmin)
-	protectedAdmin.POST("/dashboard", handlers.AdminDashboard)
+	protectedAdmin.GET("/dashboard", handlers.AdminDashboard)
+	protectedAdmin.GET("/get-user/:user_id", handlers.AdminGetUserByID())
     
 	// Register users protected routes
-	protected := router.Group("/users")
+	protected := router.Group("/user")
 	protected.Use(middlewares.AuthMiddleware())	
 	protected.POST("/deposit", handlers.Deposit)
 	protected.POST("/withdraw", handlers.Withdraw)
-
+	protected.GET("", handlers.GetUserByID())
+	
 	// Set up the cron job
 	c := cron.New()
 	_, err = c.AddFunc("@daily", func() {
