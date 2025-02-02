@@ -14,8 +14,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var usersCollection = database.GetCollection("users")
-
 // RegisterUser handles user registration
 func RegisterUser(c *gin.Context) {
 	var request struct {
@@ -30,7 +28,7 @@ func RegisterUser(c *gin.Context) {
 	}
 
 	// Check if email is already registered
-	//usersCollection := database.GetCollection("users")
+	usersCollection := database.GetCollection("users")
 	var existingUser models.User
 	err := usersCollection.FindOne(context.Background(), bson.M{"email": request.Email}).Decode(&existingUser)
 	if err == nil {
@@ -79,7 +77,7 @@ func Login(c *gin.Context) {
     }
 
     // Fetch the user document from the database
-    //usersCollection := database.GetCollection("users")
+    usersCollection := database.GetCollection("users")
     var user models.User
     err := usersCollection.FindOne(context.Background(), bson.M{"email": request.Email}).Decode(&user)
     if err != nil {

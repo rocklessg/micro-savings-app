@@ -31,7 +31,7 @@ func RegisterAdmin(c *gin.Context) {
 	}
 
 	// Check if email is already registered
-	//usersCollection := database.GetCollection("users")
+	usersCollection := database.GetCollection("users")
 	var existingUser models.User
 	err := usersCollection.FindOne(context.Background(), bson.M{"email": request.Email}).Decode(&existingUser)
 	if err == nil {
@@ -105,6 +105,8 @@ func MakeAdmin(c *gin.Context) {
 	}
 
 	// update user to admin
+    var usersCollection = database.GetCollection("users")
+
 	_, err = usersCollection.UpdateOne(context.Background(),
 				bson.M{"_id": user.ID},
 				bson.M{"$set": bson.M{"is_admin": true}})
@@ -144,6 +146,8 @@ func RemoveAdmin(c *gin.Context) {
 		}
 
 		// update. remove user from being an admin
+        usersCollection := database.GetCollection("users")
+
 	_, err = usersCollection.UpdateOne(context.Background(),
 				bson.M{"_id": user.ID},
 				bson.M{"$set": bson.M{"is_admin": false}})
@@ -159,6 +163,7 @@ func RemoveAdmin(c *gin.Context) {
 // This function handles admin dashboard statistics
 func AdminDashboard(c *gin.Context) {
 	// fetch stats from the database
+	usersCollection := database.GetCollection("users")
 	totalUsers, err := usersCollection.CountDocuments(context.Background(), bson.M{"is_admin": false})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch total users"})

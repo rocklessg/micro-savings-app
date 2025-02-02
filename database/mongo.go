@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -50,6 +51,12 @@ func DisconnectMongoDB() error {
 
 // GetCollection returns a reference to a specific collection
 func GetCollection(collectionName string) *mongo.Collection {
+	// Load environment variables
+	err := godotenv.Load()
+	if err != nil {
+		panic("Failed to load .env file")
+	}
+
     dbName := os.Getenv("DB_NAME")
     if dbName == "" {
         panic("DB_NAME is not set in the environment variables")
