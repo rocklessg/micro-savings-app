@@ -22,7 +22,7 @@ func RegisterAdmin(c *gin.Context) {
 		Name     string `json:"name" binding:"required"`
 		Email    string `json:"email" binding:"required,email"`
 		Password string `json:"password" binding:"required"`
-		SecretKey   string `json:"secret_key"` // Admin secret Key
+		SecretKey   string `json:"secret_key" binding:"required"` // Admin secret Key
 	}
 
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -42,6 +42,7 @@ func RegisterAdmin(c *gin.Context) {
 	// verify admin secret key
 	if request.SecretKey != os.Getenv("ADMIN_SECRET") {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized!"})
+		return
 	}
 
 	// Hash the password
@@ -109,7 +110,10 @@ func MakeAdmin(c *gin.Context) {
 
 	_, err = usersCollection.UpdateOne(context.Background(),
 				bson.M{"_id": user.ID},
-				bson.M{"$set": bson.M{"is_admin": true}})
+				bson.M{"$set": bson.M{
+					"is_admin": true,
+					"updated_at": time.Now(),
+				}})
 				
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create an admin user"})
