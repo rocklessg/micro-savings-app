@@ -52,7 +52,7 @@ func ValidateJWT(tokenString string) (jwt.MapClaims, error) {
 
 func getJWTSecret() string {
 	// Load environment variables
-	err := godotenv.Load()
+	err := godotenv.Load("../.env") // Remove the path if the .env file is in the same directory (after unit test)
 	if err != nil {
 		panic("Failed to load .env file")
 	}
